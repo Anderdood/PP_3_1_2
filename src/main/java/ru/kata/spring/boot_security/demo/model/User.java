@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -30,6 +31,8 @@ public class User implements UserDetails {
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles;
 
+    @Transient
+    private List<String> roleNames; // временное поле для имен ролей
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return roles;

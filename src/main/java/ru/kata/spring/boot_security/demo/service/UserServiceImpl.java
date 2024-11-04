@@ -8,9 +8,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.kata.spring.boot_security.demo.dao.RoleDao;
 import ru.kata.spring.boot_security.demo.dao.UserDao;
+import ru.kata.spring.boot_security.demo.model.Role;
 import ru.kata.spring.boot_security.demo.model.User;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -44,7 +46,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(readOnly = true)
-    public User findUserByName (String username) {
+    public User findUserByName(String username) {
         return userDao.findUserByName(username);
     }
 
@@ -56,16 +58,26 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
+    public void saveUser(String name, String email, String password, Set<Role> roles) {
+        User user = new User();
+        user.setUsername(name);
+        user.setEmail(email);
+        user.setPassword(passwordEncoder.encode(password));
+        user.setRoles(roles);
+        userDao.saveUser(user);
+    }
+    @Override
+    @Transactional
     public void saveUser(String name, String email, String password) {
         User user = new User();
         user.setUsername(name);
         user.setEmail(email);
         user.setPassword(passwordEncoder.encode(password));
+        Set<Role> roles=new HashSet<>();
         if (name.equals("admin")) {
-            user.setRoles(Set.of(roleRepository.findRoleByName("ROLE_ADMIN")));
-        } else {
-            user.setRoles(Set.of(roleRepository.findRoleByName("ROLE_USER")));
+            roles.add(roleRepository.findRoleByName("ROLE_ADMIN"));
         }
+        user.setRoles(roles);
         userDao.saveUser(user);
     }
 
@@ -90,5 +102,10 @@ public class UserServiceImpl implements UserService {
             throw new UsernameNotFoundException("User not found");
         }
         return user;
+    }
+    @Override
+    @Transactional(readOnly = true)
+    public List<Role> getAllRoles() {
+        return roleRepository.getAllRoles();
     }
 }

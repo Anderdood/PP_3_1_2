@@ -8,6 +8,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
+import java.util.List;
 
 @Repository
 public class RoleDaoImpl implements RoleDao {
@@ -31,6 +32,11 @@ public class RoleDaoImpl implements RoleDao {
     @Transactional
     public void saveRole(Role role) {
         entityManager.persist(role);
+    }
+
+    @Override
+    public List<Role> getAllRoles() {
+        return entityManager.createQuery("SELECT r FROM Role r", Role.class).getResultList();
     }
 
 }
