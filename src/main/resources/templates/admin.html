@@ -9,11 +9,10 @@
 <br>
 <a th:href="@{/logout}">Logout</a>
 
-<h1>User list</h1>
-
+<h1>User List</h1>
 <form action="/admin/find" method="post">
     <input type="number" name="id" placeholder="Enter User ID" required/>
-    <button type="submit">Find User</button>
+    <button type="submit" class="btn btn-primary">Find User</button>
 </form>
 
 <div th:if="${foundUser != null}">
@@ -21,14 +20,16 @@
     <p>ID: <span th:text="${foundUser.id}"></span></p>
     <p>Username: <span th:text="${foundUser.username}"></span></p>
     <p>Email: <span th:text="${foundUser.email}"></span></p>
+    <p>Roles: <span th:each="role : ${foundUser.roles}" th:text="${role.name} + ' '"></span></p>
 </div>
 <br>
-<table>
+<table class="table">
     <thead>
     <tr>
         <th>ID</th>
         <th>Name</th>
         <th>Email</th>
+        <th>Roles</th>
         <th>Action</th>
     </tr>
     </thead>
@@ -37,6 +38,11 @@
         <td th:text="${user.id}"></td>
         <td th:text="${user.username}"></td>
         <td th:text="${user.email}"></td>
+        <td>
+            <span th:each="role : ${user.roles}">
+                <span th:text="${#strings.substring(role.name, 5)}"></span>
+            </span>
+        </td>
         <td>
             <form action="/admin/update" method="post" style="display:inline;">
                 <input type="hidden" name="id" th:value="${user.id}"/>
@@ -56,11 +62,11 @@
 
 <h2>Add User</h2>
 <form action="/admin/add" method="post" th:object="${user}">
-        <input type="text" th:field="*{username}"  placeholder="Username" required/>
-        <input type="email" th:field="*{email}" placeholder="Email" required/>
-        <input type="password" th:field="*{password}"  placeholder="Password" required/>
+    <input type="text" th:field="*{username}" placeholder="Username" required/>
+    <input type="email" th:field="*{email}" placeholder="Email" required/>
+    <input type="password" th:field="*{password}" placeholder="Password" required/>
     <label>Roles:</label>
-    <select th:field="*{roleNames}"  multiple>
+    <select th:field="*{roleNames}" multiple>
         <option th:each="role : ${allRoles}" th:value="${role.name}"
                 th:text="${role.name}"></option>
     </select>
